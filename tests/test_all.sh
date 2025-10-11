@@ -96,23 +96,29 @@ for test in $TESTS; do
     TEST_NAME=$(basename "$test")
     TOTAL_TESTS=$((TOTAL_TESTS + 1))
 
-    echo ""
-    echo -e "${BOLD}=========================================="
-    echo "Running: $TEST_NAME"
-    echo -e "==========================================${BOLD_NC}"
-    echo ""
+    # Create temporary file for test output
+    TEST_OUTPUT=$(mktemp)
+    trap "rm -f '$TEST_OUTPUT'" EXIT
 
-    # Run test and capture exit code
-    if "$test"; then
+    echo -n "Running $TEST_NAME... "
+
+    # Run test and capture output
+    if "$test" > "$TEST_OUTPUT" 2>&1; then
         PASSED_TESTS=$((PASSED_TESTS + 1))
-        log_success "Test passed: $TEST_NAME"
+        echo -e "${GREEN}PASS${NC}"
+        rm -f "$TEST_OUTPUT"
     else
         FAILED_TESTS=$((FAILED_TESTS + 1))
         FAILED_TEST_NAMES+=("$TEST_NAME")
-        log_error "Test failed: $TEST_NAME"
+        echo -e "${RED}FAIL${NC}"
+        echo ""
+        echo "Output from $TEST_NAME:"
+        echo "----------------------------------------"
+        cat "$TEST_OUTPUT"
+        echo "----------------------------------------"
+        echo ""
+        rm -f "$TEST_OUTPUT"
     fi
-
-    echo ""
 done
 
 #
