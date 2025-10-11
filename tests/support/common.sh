@@ -115,7 +115,7 @@ check_testroot() {
     fi
 
     # Check if TESTROOT is on a btrfs filesystem
-    if ! $SUDO btrfs filesystem show "$TESTROOT" >/dev/null 2>&1; then
+    if ! $SUDO btrfs subvolume show "$TESTROOT" >/dev/null 2>&1; then
         log_error "TESTROOT is not on a btrfs filesystem: $TESTROOT"
         return 1
     fi

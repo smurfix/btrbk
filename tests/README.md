@@ -192,7 +192,7 @@ sudo rm -rf "$TESTROOT"/*
 
 Ensure TESTROOT points to a btrfs-mounted directory:
 ```bash
-sudo btrfs filesystem show "$TESTROOT"
+sudo btrfs subvolume show "$TESTROOT"
 ```
 
 ### "Required command not found: faketime"
