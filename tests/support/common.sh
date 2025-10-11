@@ -249,10 +249,8 @@ cleanup_test_env() {
     subvols=$($SUDO btrfs subvolume list -o "$TESTROOT" 2>/dev/null | awk '{print $NF}' | tac || true)
 
     for subvol in $subvols; do
-        local full_path="$TESTROOT/$subvol"
-        if [ -e "$full_path" ]; then
-            delete_subvol "$full_path" || true
-        fi
+        local full_path="$(dirname "$TESTROOT")"/"$subvol"
+        delete_subvol "$full_path" || true
     done
 
     # Clean up regular directories and files
