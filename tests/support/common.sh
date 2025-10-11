@@ -282,6 +282,14 @@ run_with_faketime() {
     faketime "$datetime" "$@"
 }
 
+sudo_with_faketime() {
+    local datetime="$1"
+    shift
+
+    log_info "Running with sudo faketime: $datetime"
+    $SUDO faketime "$datetime" "$@"
+}
+
 #
 # Data comparison
 #
@@ -382,7 +390,7 @@ export -f check_testroot check_prerequisites
 export -f create_subvol delete_subvol list_subvols
 export -f expand_config
 export -f setup_test_env cleanup_test_env
-export -f run_with_faketime compare_subvols
+export -f run_with_faketime sudo_with_faketime compare_subvols
 export -f print_test_summary
 
 # Set test directory (always points to tests/)

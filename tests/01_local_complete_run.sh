@@ -68,8 +68,8 @@ log_info "Creating initial test data..."
 
 # Run btrbk with faketime for deterministic timestamp
 log_info "Running initial backup with btrbk (date: 2025-01-01)..."
-run_with_faketime "2025-01-01 12:00:00" \
-    $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
+sudo_with_faketime "2025-01-01 12:00:00" \
+    "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
 
 # Verify snapshot was created
 log_info "Verifying snapshot creation..."
@@ -102,8 +102,8 @@ log_info "Modifying test data..."
 
 # Run incremental backup
 log_info "Running incremental backup with btrbk (date: 2025-01-02)..."
-run_with_faketime "2025-01-02 12:00:00" \
-    $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
+sudo_with_faketime "2025-01-02 12:00:00" \
+    "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
 
 # Verify new snapshot was created
 log_info "Verifying new snapshot creation..."
