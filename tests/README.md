@@ -36,6 +36,18 @@ export TESTROOT=/mnt/test_btrfs
 
 ## Running Tests
 
+The test suite uses `sudo` liberally. You might want to do something like
+this, in order to not type your password umpteen times:
+
+```bash
+export SUDO_ASKPASS=$XDG_RUNTIME_DIR/sudo_password
+cat >$SUDO_ASKPASS <<END
+#!/bin/sh
+echo $(quote "$(ssh-askpass)")
+END
+chmod 700 $SUDO_ASKPASS
+```
+
 ### Run All Tests
 
 ```bash
