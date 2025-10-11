@@ -73,12 +73,12 @@ sudo_with_faketime "2025-01-01 12:00:00" \
 
 # Verify snapshot was created
 log_info "Verifying snapshot creation..."
-SNAPSHOT="$TESTROOT/snapshots/data.20250101"
+SNAPSHOT="$TESTROOT/snapshots/data.20250101T1200"
 assert_subvol_exists "$SNAPSHOT" "Snapshot should exist: $SNAPSHOT"
 
 # Verify backup was created
 log_info "Verifying backup creation..."
-BACKUP1="$TESTROOT/backup/data.20250101"
+BACKUP1="$TESTROOT/backup/data.20250101T1200"
 assert_subvol_exists "$BACKUP1" "Backup should exist: $BACKUP1"
 
 # Verify backup contents match source
@@ -107,12 +107,12 @@ sudo_with_faketime "2025-01-02 12:00:00" \
 
 # Verify new snapshot was created
 log_info "Verifying new snapshot creation..."
-SNAPSHOT2="$TESTROOT/snapshots/data.20250102"
+SNAPSHOT2="$TESTROOT/snapshots/data.20250102T1200"
 assert_subvol_exists "$SNAPSHOT2" "New snapshot should exist: $SNAPSHOT2"
 
 # Verify new backup was created
 log_info "Verifying new backup creation..."
-BACKUP2="$TESTROOT/backup/data.20250102"
+BACKUP2="$TESTROOT/backup/data.20250102T1200"
 assert_subvol_exists "$BACKUP2" "New backup should exist: $BACKUP2"
 
 # Verify incremental backup contents match modified source
