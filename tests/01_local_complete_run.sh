@@ -21,7 +21,7 @@ export TEST_DIR
 source "$TEST_DIR/support/common.sh"
 
 TEST_NAME="01_local_complete_run"
-CONFIG_FILE="$TEST_DIR/config/local_simple.conf"
+CONFIG_TEMPLATE="$TEST_DIR/config/local_simple.conf"
 
 log_info "=========================================="
 log_info "Test: Local Complete Run (send-receive)"
@@ -37,8 +37,12 @@ setup_test_env "$TEST_NAME" || {
     exit 1
 }
 
-# Export TESTROOT for config file variable expansion
-export TESTROOT
+# Expand config file template
+CONFIG_FILE="$TESTROOT/current.conf"
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
+    log_error "Failed to expand config file"
+    exit 1
+}
 
 log_info "Creating test data subvolume..."
 create_subvol "$TESTROOT/data"

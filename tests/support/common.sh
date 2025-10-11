@@ -183,6 +183,37 @@ list_subvols() {
 }
 
 #
+# Config file expansion
+#
+
+expand_config() {
+    local template="$1"
+    local output="${2:-$TESTROOT/current.conf}"
+
+    if [ ! -f "$template" ]; then
+        log_error "Template config file does not exist: $template"
+        return 1
+    fi
+
+    log_info "Expanding config: $template -> $output"
+
+    # Use Python script for variable expansion
+    local tmpfile=$(mktemp)
+    trap "rm -f '$tmpfile'" RETURN
+
+    if ! python3 "$TEST_DIR/support/expand_vars.py" "$template" "$tmpfile"; then
+        log_error "Failed to expand config template"
+        return 1
+    fi
+
+    $SUDO mv "$tmpfile" "$output"
+    $SUDO chmod 644 "$output"
+
+    log_info "Config file ready: $output"
+    return 0
+}
+
+#
 # Test environment setup/cleanup
 #
 
@@ -349,6 +380,7 @@ export -f log_info log_error log_success log_warning
 export -f assert_true assert_file_exists assert_dir_exists assert_subvol_exists assert_equal
 export -f check_testroot check_prerequisites
 export -f create_subvol delete_subvol list_subvols
+export -f expand_config
 export -f setup_test_env cleanup_test_env
 export -f run_with_faketime compare_subvols
 export -f print_test_summary
@@ -366,5 +398,5 @@ BTRBK_BIN="${BTRBK_BIN:-$TEST_DIR/../btrbk}"
 export BTRBK_BIN
 
 # Set sudo command (can be overridden with environment variable)
-SUDO="${SUDO:-sudo -A}"
+SUDO="${SUDO:-sudo -A --preserve-env=TESTROOT}"
 export SUDO
