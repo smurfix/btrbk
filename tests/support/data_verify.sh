@@ -117,7 +117,7 @@ compare_file_content() {
         return $?
     elif [ -f "$src_file" ]; then
         # Compare regular files
-        sudo cmp -s "$src_file" "$tgt_file"
+        $SUDO cmp -s "$src_file" "$tgt_file"
         return $?
     elif [ -d "$src_file" ]; then
         # Both are directories
@@ -140,8 +140,8 @@ DIFF_FILE="$TMP_DIR/diff.txt"
 
 # Generate sorted file lists
 log_info "Generating file lists..."
-(cd "$SOURCE" && sudo find . -print | sort > "$SRC_LIST")
-(cd "$TARGET" && sudo find . -print | sort > "$TGT_LIST")
+(cd "$SOURCE" && $SUDO find . -print | sort > "$SRC_LIST")
+(cd "$TARGET" && $SUDO find . -print | sort > "$TGT_LIST")
 
 SRC_COUNT=$(wc -l < "$SRC_LIST")
 TGT_COUNT=$(wc -l < "$TGT_LIST")

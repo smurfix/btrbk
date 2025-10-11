@@ -63,7 +63,7 @@ modify_file() {
     fi
 
     log_info "Modifying file: $filepath"
-    sudo bash -c "echo '$new_content' >> '$filepath'"
+    $SUDO bash -c "echo '$new_content' >> '$filepath'"
 }
 
 append_to_file() {
@@ -76,7 +76,7 @@ append_to_file() {
     fi
 
     log_info "Appending to file: $filepath"
-    sudo bash -c "echo '$content' >> '$filepath'"
+    $SUDO bash -c "echo '$content' >> '$filepath'"
 }
 
 create_new_file() {
@@ -85,8 +85,8 @@ create_new_file() {
     local mode="${3:-644}"
 
     log_info "Creating new file: $filepath"
-    sudo bash -c "echo '$content' > '$filepath'"
-    sudo chmod "$mode" "$filepath"
+    $SUDO bash -c "echo '$content' > '$filepath'"
+    $SUDO chmod "$mode" "$filepath"
 }
 
 delete_file() {
@@ -98,7 +98,7 @@ delete_file() {
     fi
 
     log_info "Deleting file: $filepath"
-    sudo rm -f "$filepath"
+    $SUDO rm -f "$filepath"
 }
 
 delete_dir() {
@@ -110,7 +110,7 @@ delete_dir() {
     fi
 
     log_info "Deleting directory: $dirpath"
-    sudo rm -rf "$dirpath"
+    $SUDO rm -rf "$dirpath"
 }
 
 #
@@ -173,7 +173,7 @@ export VERSION='1.0'" \
     # Modify binary file
     if [ -f "$SUBVOL/pictures/image.bin" ]; then
         log_info "Modifying binary file"
-        sudo dd if=/dev/urandom of="$SUBVOL/pictures/image.bin" bs=1 count=512 seek=512 conv=notrunc status=none
+        $SUDO dd if=/dev/urandom of="$SUBVOL/pictures/image.bin" bs=1 count=512 seek=512 conv=notrunc status=none
     fi
 
     log_success "Modification set 1 applied"
@@ -212,7 +212,7 @@ source ./config.sh
 echo \"Version: \$VERSION\""
 
     # Create new directory with files
-    sudo mkdir -p "$SUBVOL/logs"
+    $SUDO mkdir -p "$SUBVOL/logs"
     create_new_file "$SUBVOL/logs/app.log" \
         "Application Log
 2025-01-03 10:00:00 - Application started
@@ -232,8 +232,8 @@ No errors recorded" \
     # Rename a file (simulate by copy and delete)
     if [ -f "$SUBVOL/music/audio.bin" ]; then
         log_info "Renaming file: audio.bin -> sound.bin"
-        sudo cp "$SUBVOL/music/audio.bin" "$SUBVOL/music/sound.bin"
-        sudo rm "$SUBVOL/music/audio.bin"
+        $SUDO cp "$SUBVOL/music/audio.bin" "$SUBVOL/music/sound.bin"
+        $SUDO rm "$SUBVOL/music/audio.bin"
     fi
 
     log_success "Modification set 2 applied"
@@ -270,7 +270,7 @@ apply_mod_major() {
 
     # Create large directory structure
     for i in {1..5}; do
-        sudo mkdir -p "$SUBVOL/data_$i"
+        $SUDO mkdir -p "$SUBVOL/data_$i"
         for j in {1..3}; do
             create_new_file "$SUBVOL/data_$i/file_$j.txt" \
                 "Data file $j in directory $i
@@ -284,7 +284,7 @@ Created during major modification test" \
 
     # Create new large binary file
     log_info "Creating large binary file"
-    sudo dd if=/dev/urandom of="$SUBVOL/large_file.bin" bs=1024 count=100 status=none
+    $SUDO dd if=/dev/urandom of="$SUBVOL/large_file.bin" bs=1024 count=100 status=none
 
     log_success "Major modifications applied"
 }
@@ -314,8 +314,8 @@ case "$MOD_SET" in
 esac
 
 # Report changes
-FILE_COUNT=$(sudo find "$SUBVOL" -type f | wc -l)
-DIR_COUNT=$(sudo find "$SUBVOL" -type d | wc -l)
+FILE_COUNT=$($SUDO find "$SUBVOL" -type f | wc -l)
+DIR_COUNT=$($SUDO find "$SUBVOL" -type d | wc -l)
 
 log_info "After modifications: $FILE_COUNT files and $DIR_COUNT directories"
 log_success "Data modification complete"

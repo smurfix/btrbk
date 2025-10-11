@@ -41,10 +41,10 @@ log_info "Creating test data subvolume..."
 create_subvol "$TESTROOT/data"
 
 log_info "Creating backup directory..."
-sudo mkdir -p "$TESTROOT/backup"
+$SUDO mkdir -p "$TESTROOT/backup"
 
 log_info "Creating snapshots directory..."
-sudo mkdir -p "$TESTROOT/snapshots"
+$SUDO mkdir -p "$TESTROOT/snapshots"
 
 #
 # Phase 1: Initial backup
@@ -62,7 +62,7 @@ log_info "Creating initial test data..."
 # Run btrbk with faketime for deterministic timestamp
 log_info "Running initial backup with btrbk (date: 2025-01-01)..."
 run_with_faketime "2025-01-01 12:00:00" \
-    sudo "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
+    $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
 
 # Verify snapshot was created
 log_info "Verifying snapshot creation..."
@@ -96,7 +96,7 @@ log_info "Modifying test data..."
 # Run incremental backup
 log_info "Running incremental backup with btrbk (date: 2025-01-02)..."
 run_with_faketime "2025-01-02 12:00:00" \
-    sudo "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
+    $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
 
 # Verify new snapshot was created
 log_info "Verifying new snapshot creation..."
@@ -143,10 +143,10 @@ list_subvols "$TESTROOT" | grep -E '(data|backup)' || true
 
 # Check btrbk list output
 log_info "Checking btrbk list snapshots..."
-sudo "$BTRBK_BIN" -c "$CONFIG_FILE" list snapshots
+$SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" list snapshots
 
 log_info "Checking btrbk list backups..."
-sudo "$BTRBK_BIN" -c "$CONFIG_FILE" list backups
+$SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" list backups
 
 log_success "Phase 3 complete: All verifications passed"
 

@@ -72,7 +72,7 @@ assert_dir_exists() {
 assert_subvol_exists() {
     local path="$1"
     local message="${2:-Subvolume should exist: $path}"
-    assert_true "sudo btrfs subvolume show '$path' >/dev/null 2>&1" "$message"
+    assert_true "$SUDO btrfs subvolume show '$path' >/dev/null 2>&1" "$message"
 }
 
 assert_equal() {
@@ -109,13 +109,13 @@ check_testroot() {
         return 1
     fi
 
-    if ! sudo test -w "$TESTROOT"; then
+    if ! $SUDO test -w "$TESTROOT"; then
         log_error "TESTROOT is not writable: $TESTROOT"
         return 1
     fi
 
     # Check if TESTROOT is on a btrfs filesystem
-    if ! sudo btrfs filesystem show "$TESTROOT" >/dev/null 2>&1; then
+    if ! $SUDO btrfs filesystem show "$TESTROOT" >/dev/null 2>&1; then
         log_error "TESTROOT is not on a btrfs filesystem: $TESTROOT"
         return 1
     fi
@@ -156,30 +156,30 @@ check_prerequisites() {
 create_subvol() {
     local path="$1"
 
-    if sudo btrfs subvolume show "$path" >/dev/null 2>&1; then
+    if $SUDO btrfs subvolume show "$path" >/dev/null 2>&1; then
         log_warning "Subvolume already exists: $path"
         return 0
     fi
 
     log_info "Creating subvolume: $path"
-    sudo btrfs subvolume create "$path"
+    $SUDO btrfs subvolume create "$path"
 }
 
 delete_subvol() {
     local path="$1"
 
-    if ! sudo btrfs subvolume show "$path" >/dev/null 2>&1; then
+    if ! $SUDO btrfs subvolume show "$path" >/dev/null 2>&1; then
         log_info "Subvolume does not exist (already deleted?): $path"
         return 0
     fi
 
     log_info "Deleting subvolume: $path"
-    sudo btrfs subvolume delete "$path"
+    $SUDO btrfs subvolume delete "$path"
 }
 
 list_subvols() {
     local path="$1"
-    sudo btrfs subvolume list "$path"
+    $SUDO btrfs subvolume list "$path"
 }
 
 #
@@ -198,7 +198,7 @@ setup_test_env() {
     cleanup_test_env
 
     # Create base directories
-    sudo mkdir -p "$TESTROOT"
+    $SUDO mkdir -p "$TESTROOT"
 
     log_success "Test environment ready"
     return 0
@@ -215,7 +215,7 @@ cleanup_test_env() {
     # Delete all subvolumes in TESTROOT
     # List in reverse order to delete children before parents
     local subvols
-    subvols=$(sudo btrfs subvolume list -o "$TESTROOT" 2>/dev/null | awk '{print $NF}' | tac || true)
+    subvols=$($SUDO btrfs subvolume list -o "$TESTROOT" 2>/dev/null | awk '{print $NF}' | tac || true)
 
     for subvol in $subvols; do
         local full_path="$TESTROOT/$subvol"
@@ -227,11 +227,11 @@ cleanup_test_env() {
     # Clean up regular directories and files
     for item in "$TESTROOT"/{data,backup,snapshots}; do
         if [ -e "$item" ]; then
-            if sudo btrfs subvolume show "$item" >/dev/null 2>&1; then
+            if $SUDO btrfs subvolume show "$item" >/dev/null 2>&1; then
                 delete_subvol "$item" || true
             else
                 log_info "Removing directory: $item"
-                sudo rm -rf "$item" || true
+                $SUDO rm -rf "$item" || true
             fi
         fi
     done
@@ -268,8 +268,8 @@ compare_subvols() {
     trap "rm -f '$tmp_src' '$tmp_dst'" EXIT
 
     # Generate file lists with relative paths
-    (cd "$src" && sudo find . -type f -o -type l | sort > "$tmp_src")
-    (cd "$dst" && sudo find . -type f -o -type l | sort > "$tmp_dst")
+    (cd "$src" && $SUDO find . -type f -o -type l | sort > "$tmp_src")
+    (cd "$dst" && $SUDO find . -type f -o -type l | sort > "$tmp_dst")
 
     if [ -n "$exclude_pattern" ]; then
         grep -v "$exclude_pattern" "$tmp_src" > "$tmp_src.filtered" || true
@@ -302,7 +302,7 @@ compare_subvols() {
             fi
         elif [ -f "$src/$file" ]; then
             # Compare regular files
-            if ! sudo cmp -s "$src/$file" "$dst/$file"; then
+            if ! $SUDO cmp -s "$src/$file" "$dst/$file"; then
                 log_error "File contents differ: $file"
                 failed=1
             fi
@@ -357,3 +357,7 @@ export -f print_test_summary
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 BTRBK_BIN="${BTRBK_BIN:-$SCRIPT_DIR/../../btrbk}"
 export BTRBK_BIN
+
+# Set sudo command (can be overridden with environment variable)
+SUDO="${SUDO:-sudo -A}"
+export SUDO
