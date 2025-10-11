@@ -16,13 +16,18 @@ export TEST_DIR
 
 source "$TEST_DIR/support/common.sh"
 
-# Color output
-BOLD='\033[1m'
-NC='\033[0m'
+# Color output (only if output is to a terminal)
+if [ -t 1 ]; then
+    BOLD='\033[1m'
+    BOLD_NC='\033[0m'
+else
+    BOLD=''
+    BOLD_NC=''
+fi
 
 echo -e "${BOLD}=========================================="
 echo "btrbk Test Suite"
-echo -e "==========================================${NC}"
+echo -e "==========================================${BOLD_NC}"
 echo ""
 
 #
@@ -94,7 +99,7 @@ for test in $TESTS; do
     echo ""
     echo -e "${BOLD}=========================================="
     echo "Running: $TEST_NAME"
-    echo -e "==========================================${NC}"
+    echo -e "==========================================${BOLD_NC}"
     echo ""
 
     # Run test and capture exit code
@@ -117,7 +122,7 @@ done
 echo ""
 echo -e "${BOLD}=========================================="
 echo "Overall Test Suite Summary"
-echo -e "==========================================${NC}"
+echo -e "==========================================${BOLD_NC}"
 echo ""
 echo "Total tests run: $TOTAL_TESTS"
 echo -e "${GREEN}Passed:         $PASSED_TESTS${NC}"

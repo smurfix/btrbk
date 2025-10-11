@@ -6,11 +6,18 @@
 set -e
 set -u
 
-# Color output for test results
-GREEN='\033[0;32m'
-RED='\033[0;31m'
-YELLOW='\033[1;33m'
-NC='\033[0m' # No Color
+# Color output for test results (only if output is to a terminal)
+if [ -t 1 ]; then
+    GREEN='\033[0;32m'
+    RED='\033[0;31m'
+    YELLOW='\033[1;33m'
+    NC='\033[0m' # No Color
+else
+    GREEN=''
+    RED=''
+    YELLOW=''
+    NC=''
+fi
 
 # Test counters
 TEST_COUNT=0
