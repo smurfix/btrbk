@@ -161,7 +161,13 @@ export TEST_DIR
 source "$TEST_DIR/support/common.sh"
 
 TEST_NAME="02_my_test"
-CONFIG_FILE="$TEST_DIR/config/my_config.conf"
+CONFIG_TEMPLATE="$TEST_DIR/config/my_config.conf"
+
+CONFIG_FILE="$TESTROOT/current.conf"
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
+    log_error "Failed to expand config file"
+    exit 1
+}
 
 log_info "Running test: $TEST_NAME"
 
@@ -171,7 +177,6 @@ export TESTROOT
 # Test implementation here
 # Use assert_* functions for validation
 
-cleanup_test_env
 print_test_summary
 
 [ $TEST_FAILED -eq 0 ] && exit 0 || exit 1
@@ -189,7 +194,10 @@ volume ${TESTROOT}
 
 ## Cleanup
 
-Tests automatically clean up after themselves. To manually clean:
+The `test_all.sh` wrapper cleans up after testing. Individual tests do not,
+so the result can be inspected manually.
+
+To manually clean:
 
 ```bash
 # Remove test btrfs filesystem
@@ -197,8 +205,8 @@ sudo umount /mnt/test_btrfs
 rm /tmp/btrbk_test.img
 
 # Or just clean TESTROOT
-sudo btrfs subvolume delete "$TESTROOT"/* 2>/dev/null || true
-sudo rm -rf "$TESTROOT"/*
+cd tests
+./99_cleanup.sh
 ```
 
 ## Troubleshooting
@@ -223,10 +231,6 @@ sudo dnf install libfaketime
 # Arch
 sudo pacman -S libfaketime
 ```
-
-### Permission Errors
-
-Tests require sudo for btrfs operations. Ensure your user can run sudo.
 
 ## Future Test Cases
 
