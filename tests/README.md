@@ -129,7 +129,7 @@ Verifies that two subvolumes contain identical data.
 ## Writing New Tests
 
 1. Create a new test script: `NN_test_name.sh`
-2. Source common.sh: `source "$SCRIPT_DIR/support/common.sh"`
+2. Source common.sh: `source "$TEST_DIR/support/common.sh"`
 3. Use setup_test_env() at the beginning
 4. Use assertion functions for validation
 5. Use cleanup_test_env() at the end
@@ -142,11 +142,14 @@ Example test template:
 set -e
 set -u
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/support/common.sh"
+# Set TEST_DIR to tests/ directory
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export TEST_DIR
+
+source "$TEST_DIR/support/common.sh"
 
 TEST_NAME="02_my_test"
-CONFIG_FILE="$SCRIPT_DIR/config/my_config.conf"
+CONFIG_FILE="$TEST_DIR/config/my_config.conf"
 
 log_info "Running test: $TEST_NAME"
 

@@ -14,11 +14,14 @@
 set -e
 set -u
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/support/common.sh"
+# Set TEST_DIR to tests/ directory
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export TEST_DIR
+
+source "$TEST_DIR/support/common.sh"
 
 TEST_NAME="01_local_complete_run"
-CONFIG_FILE="$SCRIPT_DIR/config/local_simple.conf"
+CONFIG_FILE="$TEST_DIR/config/local_simple.conf"
 
 log_info "=========================================="
 log_info "Test: Local Complete Run (send-receive)"
@@ -57,7 +60,7 @@ log_info "=========================================="
 
 # Create initial test data
 log_info "Creating initial test data..."
-"$SCRIPT_DIR/support/data_create.sh" "$TESTROOT/data" "initial"
+"$TEST_DIR/support/data_create.sh" "$TESTROOT/data" "initial"
 
 # Run btrbk with faketime for deterministic timestamp
 log_info "Running initial backup with btrbk (date: 2025-01-01)..."
@@ -76,7 +79,7 @@ assert_subvol_exists "$BACKUP1" "Backup should exist: $BACKUP1"
 
 # Verify backup contents match source
 log_info "Verifying backup contents match source..."
-"$SCRIPT_DIR/support/data_verify.sh" "$TESTROOT/data" "$BACKUP1" --verbose
+"$TEST_DIR/support/data_verify.sh" "$TESTROOT/data" "$BACKUP1" --verbose
 
 log_success "Phase 1 complete: Initial backup successful"
 
@@ -91,7 +94,7 @@ log_info "=========================================="
 
 # Modify test data
 log_info "Modifying test data..."
-"$SCRIPT_DIR/support/data_modify.sh" "$TESTROOT/data" "set1"
+"$TEST_DIR/support/data_modify.sh" "$TESTROOT/data" "set1"
 
 # Run incremental backup
 log_info "Running incremental backup with btrbk (date: 2025-01-02)..."
@@ -110,7 +113,7 @@ assert_subvol_exists "$BACKUP2" "New backup should exist: $BACKUP2"
 
 # Verify incremental backup contents match modified source
 log_info "Verifying incremental backup contents match modified source..."
-"$SCRIPT_DIR/support/data_verify.sh" "$TESTROOT/data" "$BACKUP2" --verbose
+"$TEST_DIR/support/data_verify.sh" "$TESTROOT/data" "$BACKUP2" --verbose
 
 # Verify first backup still exists and hasn't changed
 log_info "Verifying first backup still exists..."
@@ -129,7 +132,7 @@ log_info "=========================================="
 
 # Verify that the two backups are different (since we modified data)
 log_info "Verifying backups are different (as expected)..."
-if "$SCRIPT_DIR/support/data_verify.sh" "$BACKUP1" "$BACKUP2" --verbose 2>/dev/null; then
+if "$TEST_DIR/support/data_verify.sh" "$BACKUP1" "$BACKUP2" --verbose 2>/dev/null; then
     log_error "Backups should be different but are identical!"
     TEST_FAILED=$((TEST_FAILED + 1))
 else

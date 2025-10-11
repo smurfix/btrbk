@@ -10,8 +10,11 @@
 set -e
 set -u
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/support/common.sh"
+# Set TEST_DIR to tests/ directory
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export TEST_DIR
+
+source "$TEST_DIR/support/common.sh"
 
 # Color output
 BOLD='\033[1m'
@@ -66,7 +69,7 @@ echo ""
 TEST_PATTERN="${1:-[0-9][0-9]_*.sh}"
 
 log_info "Finding tests matching pattern: $TEST_PATTERN"
-TESTS=$(find "$SCRIPT_DIR" -maxdepth 1 -name "$TEST_PATTERN" -type f | sort)
+TESTS=$(find "$TEST_DIR" -maxdepth 1 -name "$TEST_PATTERN" -type f | sort)
 
 if [ -z "$TESTS" ]; then
     log_error "No tests found matching pattern: $TEST_PATTERN"

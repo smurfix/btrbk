@@ -353,9 +353,16 @@ export -f setup_test_env cleanup_test_env
 export -f run_with_faketime compare_subvols
 export -f print_test_summary
 
+# Set test directory (always points to tests/)
+# When sourced from support/, go up one level; from tests/, use current dir
+if [ -z "${TEST_DIR:-}" ]; then
+    SUPPORT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    TEST_DIR="$(cd "$SUPPORT_DIR/.." && pwd)"
+fi
+export TEST_DIR
+
 # Set btrbk binary path relative to test directory
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BTRBK_BIN="${BTRBK_BIN:-$SCRIPT_DIR/../../btrbk}"
+BTRBK_BIN="${BTRBK_BIN:-$TEST_DIR/../btrbk}"
 export BTRBK_BIN
 
 # Set sudo command (can be overridden with environment variable)

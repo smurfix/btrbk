@@ -8,8 +8,12 @@
 set -e
 set -u
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/common.sh"
+# Set TEST_DIR to tests/ directory
+SUPPORT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEST_DIR="$(cd "$SUPPORT_DIR/.." && pwd)"
+export TEST_DIR
+
+source "$TEST_DIR/support/common.sh"
 
 usage() {
     cat <<EOF
