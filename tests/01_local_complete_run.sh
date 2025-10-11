@@ -158,17 +158,6 @@ $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" list backups
 log_success "Phase 3 complete: All verifications passed"
 
 #
-# Cleanup
-#
-
-log_info ""
-log_info "=========================================="
-log_info "Cleanup"
-log_info "=========================================="
-
-cleanup_test_env
-
-#
 # Test summary
 #
 

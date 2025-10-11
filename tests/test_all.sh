@@ -106,7 +106,6 @@ for test in $TESTS; do
     if "$test" > "$TEST_OUTPUT" 2>&1; then
         PASSED_TESTS=$((PASSED_TESTS + 1))
         echo -e "${GREEN}PASS${NC}"
-        rm -f "$TEST_OUTPUT"
     else
         FAILED_TESTS=$((FAILED_TESTS + 1))
         FAILED_TEST_NAMES+=("$TEST_NAME")
@@ -117,9 +116,15 @@ for test in $TESTS; do
         cat "$TEST_OUTPUT"
         echo "----------------------------------------"
         echo ""
-        rm -f "$TEST_OUTPUT"
     fi
+    rm -f "$TEST_OUTPUT"
 done
+
+#
+# Final cleanup
+#
+
+cleanup_test_env
 
 #
 # Print overall summary
