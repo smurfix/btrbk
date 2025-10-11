@@ -109,5 +109,24 @@ clean:
 	rm -f *.gz
 	@$(MAKE) -C doc clean
 
+test:
+	@echo 'running test suite...'
+	@if [ -z "$(TESTROOT)" ]; then \
+		echo "ERROR: TESTROOT environment variable is not set"; \
+		echo "Please set TESTROOT to a writable btrfs subvolume:"; \
+		echo "  export TESTROOT=/mnt/test_btrfs"; \
+		echo ""; \
+		echo "To create a test btrfs filesystem:"; \
+		echo "  truncate -s 10G /tmp/btrbk_test.img"; \
+		echo "  mkfs.btrfs /tmp/btrbk_test.img"; \
+		echo "  mkdir -p /mnt/test_btrfs"; \
+		echo "  sudo mount -o loop /tmp/btrbk_test.img /mnt/test_btrfs"; \
+		echo "  export TESTROOT=/mnt/test_btrfs"; \
+		exit 1; \
+	fi
+	cd tests && ./test_all.sh
+
+.PHONY: all install install-bin install-bin-links install-etc install-completion install-systemd install-share install-man install-doc man clean test
+
 %.gz : %
 	gzip -9 -n -c $< > $@

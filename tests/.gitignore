@@ -1,0 +1,4 @@
+# Ignore test runtime artifacts
+*.log
+*.tmp
+.test_*
