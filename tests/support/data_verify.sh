@@ -121,7 +121,7 @@ compare_file_content() {
         return $?
     elif [ -f "$src_file" ]; then
         # Compare regular files
-        $SUDO cmp -s "$src_file" "$tgt_file"
+        cmp -s "$src_file" "$tgt_file"
         return $?
     elif [ -d "$src_file" ]; then
         # Both are directories
@@ -144,8 +144,8 @@ DIFF_FILE="$TMP_DIR/diff.txt"
 
 # Generate sorted file lists
 log_info "Generating file lists..."
-(cd "$SOURCE" && $SUDO find . -print | sort > "$SRC_LIST")
-(cd "$TARGET" && $SUDO find . -print | sort > "$TGT_LIST")
+(cd "$SOURCE" && find . -print | sort > "$SRC_LIST")
+(cd "$TARGET" && find . -print | sort > "$TGT_LIST")
 
 SRC_COUNT=$(wc -l < "$SRC_LIST")
 TGT_COUNT=$(wc -l < "$TGT_LIST")
@@ -171,7 +171,7 @@ if ! diff -u "$SRC_LIST" "$TGT_LIST" > "$DIFF_FILE"; then
     REMOVED=$(grep -c '^-\.' "$DIFF_FILE" || true)
     log_info "Files added: $ADDED"
     log_info "Files removed: $REMOVED"
-else
+elif [ $VERBOSE -eq 1 ] ; then
     log_success "File lists are identical"
 fi
 
@@ -180,7 +180,7 @@ if [ $FILE_LIST_ONLY -eq 1 ]; then
     if [ $DIFFERENCES_FOUND -eq 1 ]; then
         log_error "File list verification failed"
         exit 1
-    else
+    elif [ $VERBOSE -eq 1 ] ; then
         log_success "File list verification passed"
         exit 0
     fi
@@ -188,7 +188,7 @@ fi
 
 # Compare file contents
 if [ $DIFFERENCES_FOUND -eq 0 ]; then
-    log_info "Comparing file contents..."
+    [ $VERBOSE -eq 1 ] && log_info "Comparing file contents..."
 
     CONTENT_DIFFS=0
     TOTAL_FILES=0
@@ -216,7 +216,7 @@ if [ $DIFFERENCES_FOUND -eq 0 ]; then
 
     if [ $CONTENT_DIFFS -gt 0 ]; then
         log_warning "Content differences found: $CONTENT_DIFFS files"
-    else
+    elif [ $VERBOSE -eq 1 ] ; then
         log_success "All file contents are identical ($TOTAL_FILES files checked)"
     fi
 fi
@@ -225,32 +225,34 @@ fi
 # Verification result
 #
 
-echo "" >&2
-echo "======================================" >&2
-echo "Verification Summary" >&2
-echo "======================================" >&2
-echo "Source: $SOURCE" >&2
-echo "Target: $TARGET" >&2
-echo "--------------------------------------" >&2
+if [ $VERBOSE -eq 1 ] ; then
+    echo "" >&2
+    echo "======================================" >&2
+    echo "Verification Summary" >&2
+    echo "======================================" >&2
+    echo "Source: $SOURCE" >&2
+    echo "Target: $TARGET" >&2
+    echo "--------------------------------------" >&2
 
-if [ $DIFFERENCES_FOUND -eq 1 ]; then
-    if [ $EXPECT_DIFFERENCES -eq 1 ]; then
-        echo -e "${GREEN}Result: PASS (differences found as expected)${NC}" >&2
-        echo "======================================" >&2
-        exit 0
+    if [ $DIFFERENCES_FOUND -eq 1 ]; then
+        if [ $EXPECT_DIFFERENCES -eq 1 ]; then
+            echo -e "${GREEN}Result: PASS (differences found as expected)${NC}" >&2
+            echo "======================================" >&2
+            exit 0
+        else
+            echo -e "${RED}Result: FAIL (unexpected differences found)${NC}" >&2
+            echo "======================================" >&2
+            exit 1
+        fi
     else
-        echo -e "${RED}Result: FAIL (unexpected differences found)${NC}" >&2
-        echo "======================================" >&2
-        exit 1
-    fi
-else
-    if [ $EXPECT_DIFFERENCES -eq 1 ]; then
-        echo -e "${RED}Result: FAIL (expected differences, but subvolumes are identical)${NC}" >&2
-        echo "======================================" >&2
-        exit 1
-    else
-        echo -e "${GREEN}Result: PASS (subvolumes are identical)${NC}" >&2
-        echo "======================================" >&2
-        exit 0
+        if [ $EXPECT_DIFFERENCES -eq 1 ]; then
+            echo -e "${RED}Result: FAIL (expected differences, but subvolumes are identical)${NC}" >&2
+            echo "======================================" >&2
+            exit 1
+        else
+            echo -e "${GREEN}Result: PASS (subvolumes are identical)${NC}" >&2
+            echo "======================================" >&2
+            exit 0
+        fi
     fi
 fi

@@ -19,7 +19,7 @@ Btrbk is a backup tool for btrfs subvolumes. It creates atomic snapshots and tra
 
 ### Key Concepts
 
-- **Volume**: Base path within btrfs filesystem (usually subvolid=5)
+- **Volume**: Base path of a btrfs filesystem (usually subvolid=5)
 - **Subvolume**: Source subvolume to be backed up (relative to volume)
 - **Snapshot**: Read-only snapshot created in `snapshot_dir`
 - **Target**: Destination for backups (local path or ssh://host/path)
@@ -66,6 +66,7 @@ make install-share        # Install auxiliary scripts
 ### Overview
 
 The test suite (`tests/`) provides comprehensive automated testing for btrbk functionality. Tests are written in Bash and use reusable helper scripts for data creation, modification, and verification.
+A failed test halts the test suite so the failure can be examined.
 
 ### Running Tests
 

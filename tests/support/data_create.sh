@@ -61,24 +61,24 @@ create_file() {
     local content="$2"
     local mode="${3:-644}"
 
-    $SUDO bash -c "echo '$content' > '$filepath'"
-    $SUDO chmod "$mode" "$filepath"
+    echo "$content" > "$filepath"
+    chmod "$mode" "$filepath"
 }
 
 create_binary_file() {
     local filepath="$1"
     local size="$2"  # in bytes
 
-    $SUDO dd if=/dev/urandom of="$filepath" bs=1 count="$size" status=none
-    $SUDO chmod 644 "$filepath"
+    dd if=/dev/urandom of="$filepath" bs=1 count="$size" status=none
+    chmod 644 "$filepath"
 }
 
 create_dir() {
     local dirpath="$1"
     local mode="${2:-755}"
 
-    $SUDO mkdir -p "$dirpath"
-    $SUDO chmod "$mode" "$dirpath"
+    mkdir -p "$dirpath"
+    chmod "$mode" "$dirpath"
 }
 
 #
@@ -175,7 +175,7 @@ Footer: Copyright" \
     create_binary_file "$SUBVOL/videos/video.bin" 4096
 
     # Create a symlink
-    $SUDO ln -sf "../pictures/photo1.txt" "$SUBVOL/documents/photo_link.txt"
+    ln -sf "../pictures/photo1.txt" "$SUBVOL/documents/photo_link.txt"
 
     # Create an empty directory
     create_dir "$SUBVOL/empty_dir"
@@ -251,8 +251,8 @@ case "$STATE" in
 esac
 
 # Verify data was created
-FILE_COUNT=$($SUDO find "$SUBVOL" -type f | wc -l)
-DIR_COUNT=$($SUDO find "$SUBVOL" -type d | wc -l)
+FILE_COUNT=$(find "$SUBVOL" -type f | wc -l)
+DIR_COUNT=$(find "$SUBVOL" -type d | wc -l)
 
 log_info "Created $FILE_COUNT files and $DIR_COUNT directories"
 log_success "Test data creation complete"

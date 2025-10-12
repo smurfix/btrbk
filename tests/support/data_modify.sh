@@ -9,8 +9,7 @@ set -e
 set -u
 
 # Set TEST_DIR to tests/ directory
-SUPPORT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-TEST_DIR="$(cd "$SUPPORT_DIR/.." && pwd)"
+TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 export TEST_DIR
 
 source "$TEST_DIR/support/common.sh"
@@ -62,12 +61,12 @@ modify_file() {
     local new_content="$2"
 
     if [ ! -e "$filepath" ]; then
-        log_warning "File does not exist, cannot modify: $filepath"
-        return 1
+        create_new_file "$filepath" "$new_content"
+        return 0
     fi
 
     log_info "Modifying file: $filepath"
-    $SUDO bash -c "echo '$new_content' >> '$filepath'"
+    echo "$new_content" >> "$filepath"
 }
 
 append_to_file() {
@@ -80,7 +79,7 @@ append_to_file() {
     fi
 
     log_info "Appending to file: $filepath"
-    $SUDO bash -c "echo '$content' >> '$filepath'"
+    echo "$content" >> "$filepath"
 }
 
 create_new_file() {
@@ -89,20 +88,20 @@ create_new_file() {
     local mode="${3:-644}"
 
     log_info "Creating new file: $filepath"
-    $SUDO bash -c "echo '$content' > '$filepath'"
-    $SUDO chmod "$mode" "$filepath"
+    echo "$content" > "$filepath"
+    chmod "$mode" "$filepath"
 }
 
 delete_file() {
     local filepath="$1"
 
     if [ ! -e "$filepath" ]; then
-        log_warning "File does not exist, cannot delete: $filepath"
+        # log_warning "File does not exist, cannot delete: $filepath"
         return 0
     fi
 
     log_info "Deleting file: $filepath"
-    $SUDO rm -f "$filepath"
+    rm -f "$filepath"
 }
 
 delete_dir() {
@@ -114,7 +113,7 @@ delete_dir() {
     fi
 
     log_info "Deleting directory: $dirpath"
-    $SUDO rm -rf "$dirpath"
+    rm -rf "$dirpath"
 }
 
 #
@@ -177,7 +176,7 @@ export VERSION='1.0'" \
     # Modify binary file
     if [ -f "$SUBVOL/pictures/image.bin" ]; then
         log_info "Modifying binary file"
-        $SUDO dd if=/dev/urandom of="$SUBVOL/pictures/image.bin" bs=1 count=512 seek=512 conv=notrunc status=none
+        dd if=/dev/urandom of="$SUBVOL/pictures/image.bin" bs=1 count=512 seek=512 conv=notrunc status=none
     fi
 
     log_success "Modification set 1 applied"
@@ -216,7 +215,7 @@ source ./config.sh
 echo \"Version: \$VERSION\""
 
     # Create new directory with files
-    $SUDO mkdir -p "$SUBVOL/logs"
+    mkdir -p "$SUBVOL/logs"
     create_new_file "$SUBVOL/logs/app.log" \
         "Application Log
 2025-01-03 10:00:00 - Application started
@@ -233,11 +232,10 @@ No errors recorded" \
     delete_file "$SUBVOL/projects/design/layout.txt"
     delete_file "$SUBVOL/videos/video.bin"
 
-    # Rename a file (simulate by copy and delete)
+    # Rename a file
     if [ -f "$SUBVOL/music/audio.bin" ]; then
         log_info "Renaming file: audio.bin -> sound.bin"
-        $SUDO cp "$SUBVOL/music/audio.bin" "$SUBVOL/music/sound.bin"
-        $SUDO rm "$SUBVOL/music/audio.bin"
+        mv "$SUBVOL/music/audio.bin" "$SUBVOL/music/sound.bin"
     fi
 
     log_success "Modification set 2 applied"
@@ -274,7 +272,7 @@ apply_mod_major() {
 
     # Create large directory structure
     for i in {1..5}; do
-        $SUDO mkdir -p "$SUBVOL/data_$i"
+        mkdir -p "$SUBVOL/data_$i"
         for j in {1..3}; do
             create_new_file "$SUBVOL/data_$i/file_$j.txt" \
                 "Data file $j in directory $i
@@ -288,7 +286,7 @@ Created during major modification test" \
 
     # Create new large binary file
     log_info "Creating large binary file"
-    $SUDO dd if=/dev/urandom of="$SUBVOL/large_file.bin" bs=1024 count=100 status=none
+    dd if=/dev/urandom of="$SUBVOL/large_file.bin" bs=1024 count=100 status=none
 
     log_success "Major modifications applied"
 }
@@ -318,8 +316,8 @@ case "$MOD_SET" in
 esac
 
 # Report changes
-FILE_COUNT=$($SUDO find "$SUBVOL" -type f | wc -l)
-DIR_COUNT=$($SUDO find "$SUBVOL" -type d | wc -l)
+FILE_COUNT=$(find "$SUBVOL" -type f | wc -l)
+DIR_COUNT=$(find "$SUBVOL" -type d | wc -l)
 
 log_info "After modifications: $FILE_COUNT files and $DIR_COUNT directories"
 log_success "Data modification complete"

@@ -19,11 +19,6 @@ else
     NC=''
 fi
 
-# Test counters
-TEST_COUNT=0
-TEST_PASSED=0
-TEST_FAILED=0
-
 #
 # Logging functions
 #
@@ -52,15 +47,12 @@ assert_true() {
     local condition="$1"
     local message="${2:-Assertion failed}"
 
-    TEST_COUNT=$((TEST_COUNT + 1))
     if eval "$condition"; then
-        TEST_PASSED=$((TEST_PASSED + 1))
         log_success "$message"
         return 0
     else
-        TEST_FAILED=$((TEST_FAILED + 1))
         log_error "$message"
-        return 1
+        exit 1
     fi
 }
 
@@ -89,13 +81,11 @@ assert_equal() {
 
     TEST_COUNT=$((TEST_COUNT + 1))
     if [ "$actual" = "$expected" ]; then
-        TEST_PASSED=$((TEST_PASSED + 1))
         log_success "$message"
         return 0
     else
-        TEST_FAILED=$((TEST_FAILED + 1))
         log_error "$message"
-        return 1
+        exit 1
     fi
 }
 
@@ -116,18 +106,12 @@ check_testroot() {
         return 1
     fi
 
-    if ! $SUDO test -w "$TESTROOT"; then
-        log_error "TESTROOT is not writable: $TESTROOT"
-        return 1
-    fi
-
     # Check if TESTROOT is on a btrfs filesystem
     if ! $SUDO btrfs subvolume show "$TESTROOT" >/dev/null 2>&1; then
         log_error "TESTROOT is not on a btrfs filesystem: $TESTROOT"
         return 1
     fi
 
-    log_info "TESTROOT validated: $TESTROOT"
     return 0
 }
 
@@ -152,7 +136,6 @@ check_prerequisites() {
         return 1
     fi
 
-    log_info "All prerequisites met"
     return 0
 }
 
@@ -170,6 +153,7 @@ create_subvol() {
 
     log_info "Creating subvolume: $path"
     $SUDO btrfs subvolume create "$path"
+    $SUDO chmod 755 "$path"
 }
 
 delete_subvol() {
@@ -180,7 +164,6 @@ delete_subvol() {
         return 0
     fi
 
-    log_info "Deleting subvolume: $path"
     $SUDO btrfs subvolume delete "$path"
 }
 
@@ -202,8 +185,6 @@ expand_config() {
         return 1
     fi
 
-    log_info "Expanding config: $template -> $output"
-
     # Use Python script for variable expansion
     local tmpfile=$(mktemp)
     trap "rm -f '$tmpfile'" RETURN
@@ -216,7 +197,6 @@ expand_config() {
     $SUDO mv "$tmpfile" "$output"
     $SUDO chmod 644 "$output"
 
-    log_info "Config file ready: $output"
     return 0
 }
 
@@ -227,8 +207,6 @@ expand_config() {
 setup_test_env() {
     local test_name="${1:-test}"
 
-    log_info "Setting up test environment: $test_name"
-
     check_testroot || return 1
     check_prerequisites || return 1
 
@@ -237,14 +215,13 @@ setup_test_env() {
 
     # Create base directories
     $SUDO mkdir -p "$TESTROOT"
+    create_subvol "$TESTROOT/data"
+    $SUDO chown $UID "$TESTROOT/data"
 
-    log_success "Test environment ready"
     return 0
 }
 
 cleanup_test_env() {
-    log_info "Cleaning up test environment"
-
     if [ -z "${TESTROOT:-}" ]; then
         log_warning "TESTROOT not set, skipping cleanup"
         return 0
@@ -266,13 +243,10 @@ cleanup_test_env() {
             if $SUDO btrfs subvolume show "$item" >/dev/null 2>&1; then
                 delete_subvol "$item" || true
             else
-                log_info "Removing directory: $item"
                 $SUDO rm -rf "$item" || true
             fi
         fi
     done
-
-    log_info "Cleanup complete"
 }
 
 #
@@ -283,7 +257,6 @@ run_with_faketime() {
     local datetime="$1"
     shift
 
-    log_info "Running with faketime: $datetime"
     faketime "$datetime" "$@"
 }
 
@@ -291,7 +264,6 @@ sudo_with_faketime() {
     local datetime="$1"
     shift
 
-    log_info "Running with sudo faketime: $datetime"
     $SUDO faketime "$datetime" "$@"
 }
 
@@ -302,7 +274,6 @@ sudo_with_faketime() {
 compare_subvols() {
     local src="$1"
     local dst="$2"
-    local exclude_pattern="${3:-}"
 
     log_info "Comparing subvolumes: $src vs $dst"
 
@@ -312,15 +283,8 @@ compare_subvols() {
     trap "rm -f '$tmp_src' '$tmp_dst'" EXIT
 
     # Generate file lists with relative paths
-    (cd "$src" && $SUDO find . -type f -o -type l | sort > "$tmp_src")
-    (cd "$dst" && $SUDO find . -type f -o -type l | sort > "$tmp_dst")
-
-    if [ -n "$exclude_pattern" ]; then
-        grep -v "$exclude_pattern" "$tmp_src" > "$tmp_src.filtered" || true
-        grep -v "$exclude_pattern" "$tmp_dst" > "$tmp_dst.filtered" || true
-        mv "$tmp_src.filtered" "$tmp_src"
-        mv "$tmp_dst.filtered" "$tmp_dst"
-    fi
+    (cd "$src" && find . -type f -o -type l | sort > "$tmp_src")
+    (cd "$dst" && find . -type f -o -type l | sort > "$tmp_dst")
 
     # Compare file lists
     if ! diff -u "$tmp_src" "$tmp_dst"; then
@@ -332,10 +296,6 @@ compare_subvols() {
     # Compare file contents
     local failed=0
     while IFS= read -r file; do
-        if [ ! -e "$src/$file" ] || [ ! -e "$dst/$file" ]; then
-            continue
-        fi
-
         if [ -L "$src/$file" ]; then
             # Compare symlinks
             local src_target=$(readlink "$src/$file")
@@ -346,7 +306,7 @@ compare_subvols() {
             fi
         elif [ -f "$src/$file" ]; then
             # Compare regular files
-            if ! $SUDO cmp -s "$src/$file" "$dst/$file"; then
+            if ! cmp -s "$src/$file" "$dst/$file"; then
                 log_error "File contents differ: $file"
                 failed=1
             fi
@@ -356,38 +316,12 @@ compare_subvols() {
     rm -f "$tmp_src" "$tmp_dst"
 
     if [ $failed -eq 0 ]; then
-        log_success "Subvolumes are identical"
         return 0
     else
-        log_error "Subvolumes differ"
+        log_error "Subvolumes '$src' and '$dst' differ"
         return 1
     fi
 }
-
-#
-# Test summary
-#
-
-print_test_summary() {
-    echo ""
-    echo "======================================"
-    echo "Test Summary"
-    echo "======================================"
-    echo "Total:  $TEST_COUNT"
-    echo -e "Passed: ${GREEN}$TEST_PASSED${NC}"
-    echo -e "Failed: ${RED}$TEST_FAILED${NC}"
-    echo "======================================"
-
-    if [ $TEST_FAILED -eq 0 ]; then
-        return 0
-    else
-        return 1
-    fi
-}
-
-#
-# Export functions
-#
 
 export -f log_info log_error log_success log_warning
 export -f assert_true assert_file_exists assert_dir_exists assert_subvol_exists assert_equal
@@ -396,7 +330,6 @@ export -f create_subvol delete_subvol list_subvols
 export -f expand_config
 export -f setup_test_env cleanup_test_env
 export -f run_with_faketime sudo_with_faketime compare_subvols
-export -f print_test_summary
 
 # Set test directory (always points to tests/)
 # When sourced from support/, go up one level; from tests/, use current dir
