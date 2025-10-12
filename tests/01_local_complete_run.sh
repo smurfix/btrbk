@@ -126,12 +126,60 @@ assert_subvol_exists "$BACKUP1" "First backup should still exist: $BACKUP1"
 log_success "Phase 2 complete: Incremental backup successful"
 
 #
-# Phase 3: Verification checks
+# Phase 3: Third backup with retention policy test
 #
 
 log_info ""
 log_info "=========================================="
-log_info "Phase 3: Additional Verification"
+log_info "Phase 3: Third Backup with Retention"
+log_info "=========================================="
+
+# Modify test data again
+log_info "Modifying test data again..."
+"$TEST_DIR/support/data_modify.sh" "$TESTROOT/data" "set2"
+
+# Run third backup (4 days later) - this should trigger retention cleanup
+log_info "Running third backup with btrbk (date: 2025-01-04)..."
+sudo_with_faketime "2025-01-04 12:00:00" \
+    "$BTRBK_BIN" -c "$CONFIG_FILE" -v run
+
+# Verify new snapshot was created
+log_info "Verifying third snapshot creation..."
+SNAPSHOT3="$TESTROOT/snapshots/data.20250104T1200"
+assert_subvol_exists "$SNAPSHOT3" "Third snapshot should exist: $SNAPSHOT3"
+
+# Verify third backup was created
+log_info "Verifying third backup creation..."
+BACKUP3="$TESTROOT/backup/data.20250104T1200"
+assert_subvol_exists "$BACKUP3" "Third backup should exist: $BACKUP3"
+
+# Verify third backup contents match modified source
+log_info "Verifying third backup contents match modified source..."
+"$TEST_DIR/support/data_verify.sh" "$TESTROOT/data" "$BACKUP3" --verbose
+
+# Check retention policy: with target_preserve 2d, first backup should be deleted
+log_info "Verifying retention policy applied..."
+if $SUDO btrfs subvolume show "$BACKUP1" >/dev/null 2>&1; then
+    log_error "First backup should have been deleted by retention policy: $BACKUP1"
+    TEST_FAILED=$((TEST_FAILED + 1))
+else
+    log_success "First backup correctly deleted by retention policy"
+    TEST_PASSED=$((TEST_PASSED + 1))
+fi
+
+# Second and third backups should still exist (within 2d retention)
+assert_subvol_exists "$BACKUP2" "Second backup should still exist: $BACKUP2"
+assert_subvol_exists "$BACKUP3" "Third backup should still exist: $BACKUP3"
+
+log_success "Phase 3 complete: Retention policy working correctly"
+
+#
+# Phase 4: Verification checks
+#
+
+log_info ""
+log_info "=========================================="
+log_info "Phase 4: Additional Verification"
 log_info "=========================================="
 
 # Verify that the two backups are different (since we modified data)
@@ -155,7 +203,7 @@ $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" list snapshots
 log_info "Checking btrbk list backups..."
 $SUDO "$BTRBK_BIN" -c "$CONFIG_FILE" list backups
 
-log_success "Phase 3 complete: All verifications passed"
+log_success "Phase 4 complete: All verifications passed"
 
 #
 # Test summary
