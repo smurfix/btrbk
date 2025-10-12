@@ -75,14 +75,19 @@ cd tests
 ```
 tests/
 ├── test_all.sh              # Main test runner
-├── 01_local_complete_run.sh # First test: local send-receive
+├── 01_local_complete_run.sh # Local send-receive with retention
+├── 02_local_split.sh        # Local send-receive with split steps
+├── 11_local_raw.sh          # Local raw backups with retention
 ├── support/                 # Reusable helper scripts
 │   ├── common.sh           # Test utilities and setup functions
 │   ├── data_create.sh      # Create test data
 │   ├── data_modify.sh      # Modify test data
-│   └── data_verify.sh      # Verify/compare data
+│   ├── data_verify.sh      # Verify/compare data
+│   ├── raw_restore.sh      # Restore raw backups for verification
+│   └── expand_vars.py      # Environment variable expansion
 └── config/                  # Test configuration files
-    └── local_simple.conf   # Basic local test config
+    ├── local_simple.conf   # Basic local test config
+    └── local_raw.conf      # Local raw backup config
 ```
 
 ## Available Tests
@@ -96,6 +101,24 @@ Tests complete local backup workflow with send-receive:
 - Modifies test data (add/delete/modify files)
 - Runs incremental backup (2025-01-02)
 - Verifies incremental backup matches modified source
+- Tests retention policies (snapshot_preserve 5d, target_preserve 2d 1w)
+
+### 02_local_split.sh
+
+Tests the same workflow as 01, but splits each `btrbk run` into individual steps:
+- Step 1: Create snapshots (`btrbk snapshot --preserve`)
+- Step 2: Create backups (`btrbk resume --preserve`)
+- Step 3: Delete backups (`btrbk prune --preserve-snapshots`)
+- Step 4: Delete snapshots (`btrbk prune --preserve-backups`)
+- Verifies that each step performs only its designated action
+
+### 11_local_raw.sh
+
+Tests complete local backup workflow with raw mode:
+- Same workflow as 01_local_complete_run.sh but uses raw backups
+- Raw backups are stored as .btrfs files (filesystem-independent)
+- Uses raw_restore.sh helper to restore and verify backups
+- Tests retention policies with raw backups
 
 ## Helper Scripts
 
@@ -137,6 +160,26 @@ Verifies that two subvolumes contain identical data.
 - `--expect-differences`: Expect differences (inverse check)
 - `--file-list`: Only compare file lists, not contents
 - `--verbose`: Show detailed comparison output
+
+### support/raw_restore.sh
+
+Restores a raw backup to a btrfs subvolume for verification.
+
+```bash
+./support/raw_restore.sh <raw_backup_path> <restore_target_dir>
+```
+
+**Features:**
+- Automatically detects compression (gzip, bzip2, xz, lz4, zstd)
+- Handles split backups (files ending with _1, _2, _3, etc.)
+- Uses `btrfs receive` to restore the backup
+- Verifies target directory is on a btrfs filesystem
+
+**Example:**
+```bash
+./support/raw_restore.sh /path/to/backup/data.20250101T1200.btrfs /mnt/restore
+./support/raw_restore.sh /path/to/backup/data.20250101T1200.btrfs.gz /mnt/restore
+```
 
 ## Writing New Tests
 
@@ -234,10 +277,9 @@ sudo pacman -S libfaketime
 
 ## Future Test Cases
 
-- 02_local_raw.sh - Raw target backups
 - 03_ssh_complete_run.sh - SSH remote backups
-- 04_retention.sh - Retention policy testing
+- 04_retention.sh - Additional retention policy testing scenarios
 - 05_resume.sh - Interrupted backup recovery
 - 06_archive.sh - Archive command testing
-- 07_prune.sh - Snapshot/backup deletion
-- 08_incremental.sh - Various incremental scenarios
+- 12_local_raw_compressed.sh - Raw backups with compression
+- 13_local_raw_split.sh - Raw backups with file splitting
