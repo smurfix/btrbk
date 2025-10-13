@@ -270,9 +270,8 @@ sudo pacman -S libfaketime
 
 ## Future Test Cases
 
-- 03_ssh_complete_run.sh - SSH remote backups
-- 04_retention.sh - Additional retention policy testing scenarios
-- 05_resume.sh - Interrupted backup recovery
-- 06_archive.sh - Archive command testing
-- 12_local_raw_compressed.sh - Raw backups with compression
-- 13_local_raw_split.sh - Raw backups with file splitting
+- 03\_ssh\_complete\_run.sh - SSH remote backups
+- 04\_retention.sh - Additional retention policy testing scenarios
+- 05\_resume.sh - Interrupted backup recovery
+- 06\_archive.sh - Archive command testing
+- 12\_local\_raw\_compressed.sh - Raw backups with compression
