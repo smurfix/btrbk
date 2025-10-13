@@ -243,7 +243,7 @@ drop_subvols() {
     # results use absolute paths. Then strip the 
     RR="$root/R-$$-R"
     $SUDO btrfs subv cre "$RR"
-    PREFIX="$($SUDO btrfs subv lis "$RR" | sed -ne "s#.* path \(.*/\)R-$$-R\$#\1#p")"
+    PREFIX="$($SUDO btrfs subv lis "$RR" | sed -ne "s|.* path \(.*/\)R-$$-R\$|\1|p")"
     if [ -z "$PREFIX" ] ; then
         echo "Could not determine subvolume prefix for '$root'"
         exit 1
