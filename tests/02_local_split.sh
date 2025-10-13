@@ -45,15 +45,6 @@ expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
     exit 1
 }
 
-log_info "Creating test data subvolume..."
-create_subvol "$TESTROOT/data"
-
-log_info "Creating backup directory..."
-$SUDO mkdir -p "$TESTROOT/backup"
-
-log_info "Creating snapshots directory..."
-$SUDO mkdir -p "$TESTROOT/snapshots"
-
 #
 # Phase 1: Initial backup (split into steps)
 #

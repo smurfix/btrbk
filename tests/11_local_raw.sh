@@ -55,18 +55,6 @@ expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE_NONINCR" || {
 }
 export -n INCREMENTAL
 
-log_info "Creating test data subvolume..."
-create_subvol "$TESTROOT/data"
-
-log_info "Creating backup directory..."
-$SUDO mkdir -p "$TESTROOT/backup"
-
-log_info "Creating snapshots directory..."
-$SUDO mkdir -p "$TESTROOT/snapshots"
-
-log_info "Creating temp directory for raw restore..."
-# $SUDO mkdir -p "$TESTROOT/temp"
-
 #
 # Phase 1: Initial backup
 #
