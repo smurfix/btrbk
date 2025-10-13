@@ -118,7 +118,9 @@ Tests complete local backup workflow with raw mode:
 - Same workflow as 01_local_complete_run.sh but uses raw backups
 - Raw backups are stored as .btrfs files (filesystem-independent)
 - Uses raw_restore.sh helper to restore and verify backups
-- Tests retention policies with raw backups
+- Tests both incremental and non-incremental raw backups
+- Tests retention policies with incremental backup chain dependencies
+- Verifies that parent backups are preserved when children depend on them
 
 ## Helper Scripts
 
@@ -166,14 +168,12 @@ Verifies that two subvolumes contain identical data.
 Restores a raw backup to a btrfs subvolume for verification.
 
 ```bash
-./support/raw_restore.sh <raw_backup_path> <restore_target_dir>
+./support/raw_restore.sh <raw_backup_file> <restore_target_dir>
 ```
 
 **Features:**
 - Automatically detects compression (gzip, bzip2, xz, lz4, zstd)
-- Handles split backups (files ending with _1, _2, _3, etc.)
-- Uses `btrfs receive` to restore the backup
-- Verifies target directory is on a btrfs filesystem
+- Handles incremental backups
 
 **Example:**
 ```bash
@@ -183,12 +183,13 @@ Restores a raw backup to a btrfs subvolume for verification.
 
 ## Writing New Tests
 
-1. Create a new test script: `NN_test_name.sh`
-2. Source common.sh: `source "$TEST_DIR/support/common.sh"`
-3. Use setup_test_env() at the beginning
+1. Name the test script `NN_test_name.sh`
+2. `source "$TEST_DIR/support/common.sh"`
+3. Use `setup_test_env` at the beginning
 4. Use assertion functions for validation
-5. Use cleanup_test_env() at the end
-6. Return appropriate exit code
+5. Write a one-liner to stderr and `exit 1` on failure. Do not continue.
+6. Do not clean up at the end, that's the job of test `99_cleanup`
+7. Return appropriate exit code
 
 Example test template:
 
@@ -202,27 +203,19 @@ TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export TEST_DIR
 
 source "$TEST_DIR/support/common.sh"
+setup_test_env
 
-TEST_NAME="02_my_test"
 CONFIG_TEMPLATE="$TEST_DIR/config/my_config.conf"
-
 CONFIG_FILE="$TESTROOT/current.conf"
-expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
-    log_error "Failed to expand config file"
-    exit 1
-}
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE"
 
-log_info "Running test: $TEST_NAME"
-
-setup_test_env "$TEST_NAME"
 export TESTROOT
 
 # Test implementation here
 # Use assert_* functions for validation
+# `exit 1` on failure
 
-print_test_summary
-
-[ $TEST_FAILED -eq 0 ] && exit 0 || exit 1
+exit 0
 ```
 
 ## Configuration Files

@@ -5,6 +5,7 @@
 
 set -e
 set -u
+set -o pipefail
 
 # Color output for test results (only if output is to a terminal)
 if [ -t 1 ]; then
@@ -18,6 +19,8 @@ else
     YELLOW=''
     NC=''
 fi
+
+export TEST_NAME="$(basename "$0" .sh)"
 
 #
 # Logging functions
@@ -98,45 +101,36 @@ check_testroot() {
         log_error "TESTROOT environment variable is not set"
         log_error "Please set TESTROOT to a writable btrfs subvolume"
         log_error "Example: export TESTROOT=/mnt/test_btrfs"
-        return 1
+        exit 1
     fi
 
     if [ ! -d "$TESTROOT" ]; then
         log_error "TESTROOT directory does not exist: $TESTROOT"
-        return 1
+        exit 1
     fi
 
     # Check if TESTROOT is on a btrfs filesystem
     if ! $SUDO btrfs subvolume show "$TESTROOT" >/dev/null 2>&1; then
         log_error "TESTROOT is not on a btrfs filesystem: $TESTROOT"
-        return 1
+        exit 1
     fi
-
-    return 0
 }
 
 check_prerequisites() {
-    local missing=0
 
     # Check for required commands
     for cmd in btrfs faketime; do
         if ! command -v "$cmd" >/dev/null 2>&1; then
             log_error "Required command not found: $cmd"
-            missing=1
+            exit 1
         fi
     done
 
     # Check for btrbk script
     if [ ! -x "$BTRBK_BIN" ]; then
         log_error "btrbk binary not found or not executable: $BTRBK_BIN"
-        missing=1
+        exit 1
     fi
-
-    if [ $missing -eq 1 ]; then
-        return 1
-    fi
-
-    return 0
 }
 
 #
@@ -182,7 +176,7 @@ expand_config() {
 
     if [ ! -f "$template" ]; then
         log_error "Template config file does not exist: $template"
-        return 1
+        exit 1
     fi
 
     # Use Python script for variable expansion
@@ -191,13 +185,11 @@ expand_config() {
 
     if ! python3 "$TEST_DIR/support/expand_vars.py" "$template" "$tmpfile"; then
         log_error "Failed to expand config template"
-        return 1
+        exit 1
     fi
 
     $SUDO mv "$tmpfile" "$output"
     $SUDO chmod 644 "$output"
-
-    return 0
 }
 
 #
@@ -207,8 +199,8 @@ expand_config() {
 setup_test_env() {
     local test_name="${1:-test}"
 
-    check_testroot || return 1
-    check_prerequisites || return 1
+    check_testroot
+    check_prerequisites
 
     # Clean up any existing test data
     cleanup_test_env
@@ -226,8 +218,6 @@ setup_test_env() {
 
     # temp (raw restore tests et al.)
     $SUDO btrfs subvolume create "$TESTROOT/temp"
-
-    return 0
 }
 
 drop_subvols() {
@@ -242,7 +232,7 @@ drop_subvols() {
     # to create a new subvolume and list with its path to ensure that all
     # results use absolute paths. Then strip the 
     RR="$root/R-$$-R"
-    $SUDO btrfs subv cre "$RR"
+    $SUDO btrfs subv cre "$RR" >/dev/null
     PREFIX="$($SUDO btrfs subv lis "$RR" | sed -ne "s|.* path \(.*/\)R-$$-R\$|\1|p")"
     if [ -z "$PREFIX" ] ; then
         echo "Could not determine subvolume prefix for '$root'"
@@ -252,7 +242,7 @@ drop_subvols() {
     $SUDO btrfs subvolume list "$RR" 2>/dev/null | python3 "$SUPPORT_DIR/subvol-prefix.py" "$PREFIX" | tac |
     while read subvol; do
         local full_path="$root/$subvol"
-        $SUDO btrfs subvolume delete --recursive "$full_path"
+        $SUDO btrfs subvolume delete --recursive "$full_path" >/dev/null
     done
     if [ -d "$RR" ] ; then
         echo "Oops, test subvol '$RR' didn't get deleted ?!?" >&2

@@ -14,8 +14,6 @@ export TEST_DIR
 
 source "$TEST_DIR/support/common.sh"
 
-TEST_NAME="99_cleanup"
-
 log_info "============="
 log_info "Test clean up"
 log_info "============="

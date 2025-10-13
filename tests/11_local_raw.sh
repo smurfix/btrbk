@@ -21,38 +21,22 @@ set -u
 TEST_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export TEST_DIR
 
-source "$TEST_DIR/support/common.sh"
-
-TEST_NAME="11_local_raw"
-CONFIG_TEMPLATE="$TEST_DIR/config/local_raw.conf"
-
-log_info "=========================================="
-log_info "Test: Local Complete Run (raw mode)"
-log_info "=========================================="
-
 #
 # Test setup
 #
 
-log_info "Setting up test environment..."
-setup_test_env "$TEST_NAME" || {
-    log_error "Failed to setup test environment"
-    exit 1
-}
+source "$TEST_DIR/support/common.sh"
+setup_test_env
+CONFIG_TEMPLATE="$TEST_DIR/config/local_raw.conf"
 
-# Expand config file template
 export INCREMENTAL=yes
 CONFIG_FILE="$TESTROOT/current.conf"
-expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
-    log_error "Failed to expand config file"
-    exit 1
-}
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE"
+
 CONFIG_FILE_NONINCR="$TESTROOT/current.nonincr.conf"
 export INCREMENTAL=no
-expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE_NONINCR" || {
-    log_error "Failed to expand config file"
-    exit 1
-}
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE_NONINCR"
+
 export -n INCREMENTAL
 
 #

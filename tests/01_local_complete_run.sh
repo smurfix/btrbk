@@ -20,7 +20,6 @@ export TEST_DIR
 
 source "$TEST_DIR/support/common.sh"
 
-TEST_NAME="01_local_complete_run"
 CONFIG_TEMPLATE="$TEST_DIR/config/local_simple.conf"
 
 log_info "=========================================="
@@ -31,18 +30,9 @@ log_info "=========================================="
 # Test setup
 #
 
-log_info "Setting up test environment..."
-setup_test_env "$TEST_NAME" || {
-    log_error "Failed to setup test environment"
-    exit 1
-}
-
-# Expand config file template
+setup_test_env
 CONFIG_FILE="$TESTROOT/current.conf"
-expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE" || {
-    log_error "Failed to expand config file"
-    exit 1
-}
+expand_config "$CONFIG_TEMPLATE" "$CONFIG_FILE"
 
 #
 # Phase 1: Initial backup
