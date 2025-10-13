@@ -218,7 +218,45 @@ setup_test_env() {
     create_subvol "$TESTROOT/data"
     $SUDO chown $UID "$TESTROOT/data"
 
+    # snapshots
+    $SUDO btrfs subvolume create "$TESTROOT/snapshots"
+
+    # backups
+    $SUDO btrfs subvolume create "$TESTROOT/backup"
+
+    # temp (raw restore tests et al.)
+    $SUDO btrfs subvolume create "$TESTROOT/temp"
+
     return 0
+}
+
+drop_subvols() {
+    # Delete all subvolumes under $1
+    # First we need to find the prefix: the root might be some directory
+    # under some subvolume mountpoint; "btrfs subvolume list" shows
+    # the path from its "real" root *IF* the subvol is not a subdirectory 
+    # of the given path.
+    local root="$1"
+
+    # we need to find the "real" prefix for this root. The safe way is
+    # to create a new subvolume and list with its path to ensure that all
+    # results use absolute paths. Then strip the 
+    RR="$root/R-$$-R"
+    $SUDO btrfs subv cre "$RR"
+    PREFIX="$($SUDO btrfs subv lis "$RR" | sed -ne "s#.* path \(.*/\)R-$$-R\$#\1#p")"
+    if [ -z "$PREFIX" ] ; then
+        echo "Could not determine subvolume prefix for '$root'"
+        exit 1
+    fi
+
+    $SUDO btrfs subvolume list "$RR" 2>/dev/null | python3 "$SUPPORT_DIR/subvol-prefix.py" "$PREFIX" | tac |
+    while read subvol; do
+        local full_path="$root/$subvol"
+        $SUDO btrfs subvolume delete --recursive "$full_path"
+    done
+    if [ -d "$RR" ] ; then
+        echo "Oops, test subvol '$RR' didn't get deleted ?!?" >&2
+    fi
 }
 
 cleanup_test_env() {
@@ -227,26 +265,7 @@ cleanup_test_env() {
         return 0
     fi
 
-    # Delete all subvolumes in TESTROOT
-    # List in reverse order to delete children before parents
-    local subvols
-    subvols=$($SUDO btrfs subvolume list -o "$TESTROOT" 2>/dev/null | awk '{print $NF}' | tac || true)
-
-    for subvol in $subvols; do
-        local full_path="$(dirname "$TESTROOT")"/"$subvol"
-        delete_subvol "$full_path" || true
-    done
-
-    # Clean up regular directories and files
-    for item in "$TESTROOT"/{data,backup,snapshots}; do
-        if [ -e "$item" ]; then
-            if $SUDO btrfs subvolume show "$item" >/dev/null 2>&1; then
-                delete_subvol "$item" || true
-            else
-                $SUDO rm -rf "$item" || true
-            fi
-        fi
-    done
+    drop_subvols "$TESTROOT"
 }
 
 #
@@ -332,9 +351,8 @@ export -f setup_test_env cleanup_test_env
 export -f run_with_faketime sudo_with_faketime compare_subvols
 
 # Set test directory (always points to tests/)
-# When sourced from support/, go up one level; from tests/, use current dir
+SUPPORT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 if [ -z "${TEST_DIR:-}" ]; then
-    SUPPORT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     TEST_DIR="$(cd "$SUPPORT_DIR/.." && pwd)"
 fi
 export TEST_DIR
