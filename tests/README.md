@@ -70,29 +70,9 @@ cd tests
 ./test_all.sh "*local*.sh"  # Run all local tests
 ```
 
-## Test Structure
-
-```
-tests/
-├── test_all.sh              # Main test runner
-├── 01_local_complete_run.sh # Local send-receive with retention
-├── 02_local_split.sh        # Local send-receive with split steps
-├── 11_local_raw.sh          # Local raw backups with retention
-├── support/                 # Reusable helper scripts
-│   ├── common.sh           # Test utilities and setup functions
-│   ├── data_create.sh      # Create test data
-│   ├── data_modify.sh      # Modify test data
-│   ├── data_verify.sh      # Verify/compare data
-│   ├── raw_restore.sh      # Restore raw backups for verification
-│   └── expand_vars.py      # Environment variable expansion
-└── config/                  # Test configuration files
-    ├── local_simple.conf   # Basic local test config
-    └── local_raw.conf      # Local raw backup config
-```
-
 ## Available Tests
 
-### 01_local_complete_run.sh
+### 01\_local\_complete\_run.sh
 
 Tests complete local backup workflow with send-receive:
 - Creates initial test data
@@ -101,9 +81,9 @@ Tests complete local backup workflow with send-receive:
 - Modifies test data (add/delete/modify files)
 - Runs incremental backup (2025-01-02)
 - Verifies incremental backup matches modified source
-- Tests retention policies (snapshot_preserve 5d, target_preserve 2d 1w)
+- Tests retention policies (snapshot\_preserve 5d, target\_preserve 2d 1w)
 
-### 02_local_split.sh
+### 02\_local\_split.sh
 
 Tests the same workflow as 01, but splits each `btrbk run` into individual steps:
 - Step 1: Create snapshots (`btrbk snapshot --preserve`)
@@ -112,19 +92,19 @@ Tests the same workflow as 01, but splits each `btrbk run` into individual steps
 - Step 4: Delete snapshots (`btrbk prune --preserve-backups`)
 - Verifies that each step performs only its designated action
 
-### 11_local_raw.sh
+### 11\_local\_raw.sh
 
 Tests complete local backup workflow with raw mode:
-- Same workflow as 01_local_complete_run.sh but uses raw backups
+- Same workflow as 01\_local\_complete\_run.sh but uses raw backups
 - Raw backups are stored as .btrfs files (filesystem-independent)
-- Uses raw_restore.sh helper to restore and verify backups
+- Uses raw\_restore.sh helper to restore and verify backups
 - Tests both incremental and non-incremental raw backups
 - Tests retention policies with incremental backup chain dependencies
 - Verifies that parent backups are preserved when children depend on them
 
 ## Helper Scripts
 
-### support/data_create.sh
+### support/data\_create.sh
 
 Creates test data in a subvolume with deterministic content.
 
@@ -136,7 +116,7 @@ Creates test data in a subvolume with deterministic content.
 - `initial` or `state1`: Basic directory structure with files
 - `state2`: Extended dataset with more files
 
-### support/data_modify.sh
+### support/data\_modify.sh
 
 Modifies existing test data in a subvolume.
 
@@ -150,7 +130,7 @@ Modifies existing test data in a subvolume.
 - `minor`: Small changes only
 - `major`: Large-scale changes
 
-### support/data_verify.sh
+### support/data\_verify.sh
 
 Verifies that two subvolumes contain identical data.
 
@@ -163,7 +143,7 @@ Verifies that two subvolumes contain identical data.
 - `--file-list`: Only compare file lists, not contents
 - `--verbose`: Show detailed comparison output
 
-### support/raw_restore.sh
+### support/raw\_restore.sh
 
 Restores a raw backup to a btrfs subvolume for verification.
 
