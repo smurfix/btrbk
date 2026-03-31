@@ -11,7 +11,7 @@
 BIN         = btrbk
 BIN_LINKS   = lsbtr
 CONFIGS     = btrbk.conf.example
-DOCS        = ChangeLog \
+DOCS        =  \
               README.md
 SCRIPTS     = ssh_filter_btrbk.sh \
               contrib/cron/btrbk-mail \

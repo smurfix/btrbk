@@ -25,3 +25,6 @@ execute_after_dh_auto_install:
 
 execute_after_dh_auto_clean:
 	rm -f debian/btrbk.service debian/btrbk.timer
+
+override_dh_auto_test:
+	: cannot run without btrfs
