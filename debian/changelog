@@ -1,3 +1,9 @@
+btrbk (0.32.6.1-1) unstable; urgency=medium
+
+  * merge include file and test suite
+
+ -- Matthias Urlichs <matthias@urlichs.de>  Tue, 31 Mar 2026 15:58:44 +0200
+
 btrbk (0.32.6-2) unstable; urgency=medium
 
   * Upload to Debian unstable
