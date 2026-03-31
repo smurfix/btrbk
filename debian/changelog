@@ -1,0 +1,529 @@
+btrbk (0.32.6-2) unstable; urgency=medium
+
+  * Upload to Debian unstable
+  * Acknowledging NMU 0.32.5-1.1 (was not part of upload to
+    experimental)
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Mon, 06 Jan 2025 19:26:20 -0500
+
+btrbk (0.32.6-1) experimental; urgency=medium
+
+  * New Upstream Release
+  * Bump Copyright Year
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 28 Mar 2023 13:20:44 +0200
+
+btrbk (0.32.5-1.1) unstable; urgency=medium
+
+  * Non-maintainer upload.
+  * Let debhelper place systemd units. (Closes: #1058772)
+
+ -- Chris Hofstaedtler <zeha@debian.org>  Sat, 25 May 2024 23:46:17 +0200
+
+btrbk (0.32.5-1) unstable; urgency=medium
+
+  * New Upstream Release
+  * Add missing NEWS item
+  * Remove constraints unnecessary since buster
+  * Use canonical URL in Vcs-Git
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 05 Nov 2022 10:44:49 +0100
+
+btrbk (0.32.4-1) unstable; urgency=medium
+
+  * New Upstream Release
+  * Use Standards-Version: 4.6.1
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 20 Aug 2022 14:40:41 +0200
+
+btrbk (0.32.3-1) unstable; urgency=medium
+
+  * New Upstream Release
+  * Bump Copyright Year
+  * Add Upstream-Contact
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 07 Aug 2022 11:23:41 +0200
+
+btrbk (0.32.2-1) experimental; urgency=medium
+
+  * New Upstream Release
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 25 Jun 2022 19:41:47 +0200
+
+btrbk (0.32.1-1) experimental; urgency=medium
+
+  * New Upstream Release
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 26 Feb 2022 20:12:35 +0100
+
+btrbk (0.32.0-1) experimental; urgency=medium
+
+  * New Upstream Release
+  * Remove alien-tag python-script-but-no-python-dep
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 26 Feb 2022 20:11:51 +0100
+
+btrbk (0.31.3-1) unstable; urgency=medium
+
+  [ Axel Burri ]
+  * New Upstream Release
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Mon, 30 Aug 2021 11:41:58 -0400
+
+btrbk (0.31.2-1) experimental; urgency=high
+
+  * New Upstream Release
+    - Fix security vulnerability in ssh_filter_btrbk.sh. Specially
+      crafted commands may be executed without being propely
+      checked. Applies to remote hosts filtering ssh commands using
+      ssh_filter_btrbk.sh in authorized_keys.
+      Affected versions: >= btrbk-0.23.0-1
+      Patch for this issue was uploaded to sid in 0.27.1-2.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 21 Mar 2021 13:55:28 +0100
+
+btrbk (0.31.1-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 07 Mar 2021 18:28:34 +0100
+
+btrbk (0.31.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 10 Jan 2021 19:13:14 +0100
+
+btrbk (0.30.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Installs to /usr/bin/ instead of /usr/sbin
+  * Use Build-Depends: debhelper (>= 12)
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 23 Sep 2020 15:21:33 +0200
+
+btrbk (0.29.1-2) UNRELEASED; urgency=medium
+
+  * Refer to specific version of license GPL-3+.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Wed, 06 May 2020 17:56:20 +0000
+
+btrbk (0.29.1-1) experimental; urgency=medium
+
+  * New upstream release.
+  * Remove "recommends" dependency on mbuffer.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 09 Feb 2020 17:22:19 +0100
+
+btrbk (0.29.0-2) UNRELEASED; urgency=medium
+
+  * Fix day-of-week for changelog entry 0.16-1.
+
+ -- Debian Janitor <janitor@jelmer.uk>  Tue, 10 Dec 2019 03:30:31 +0000
+
+btrbk (0.29.0-1) experimental; urgency=low
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 27 Oct 2019 14:03:27 +0100
+
+btrbk (0.28.3-1) experimental; urgency=low
+
+  * New upstream release.
+  * Remove depends on btrfs-tools (Closes: #932121)
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 28 Jul 2019 15:47:35 +0200
+
+btrbk (0.28.2-1) experimental; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 23 May 2019 14:14:32 +0200
+
+btrbk (0.28.1-1) experimental; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 16 May 2019 17:34:52 +0200
+
+btrbk (0.28.0-1) experimental; urgency=medium
+
+  * New upstream release.
+  * Remove build depends on asciidoc.
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 24 Apr 2019 21:06:55 +0200
+
+btrbk (0.27.2-1) experimental; urgency=medium
+
+  * New upstream release.
+  * Depend on btrfs-progs (>= 4.12)
+
+ -- Axel Burri <axel@tty0.ch>  Mon, 01 Apr 2019 20:45:59 +0200
+
+btrbk (0.27.1-2) unstable; urgency=high
+
+  * Acknowledge preceding no-code-changes NMU
+  * Cherry-pick 2 patches from upstream
+    - 0001-btrbk-fix-scheduler-when-overriding-target_preserve_.patch
+      highly recommended by upstream
+    - 0001-ssh_filter_btrbk.sh-fix-alternation-regex.patch
+      fixes a security vulnerability which would have allowed for an
+      arbitrary code execution
+  * d/control
+    - Added myself to Uploaders
+    - Boost compat to 10 (keeping old to ease backports)
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Tue, 23 Mar 2021 09:32:13 -0400
+
+btrbk (0.27.1-1.1) unstable; urgency=medium
+
+  * Non maintainer upload by the Reproducible Builds team.
+  * No source change upload to rebuild on buildd with .buildinfo files.
+
+ -- Holger Levsen <holger@debian.org>  Sun, 03 Jan 2021 13:57:08 +0100
+
+btrbk (0.27.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 05 Dec 2018 22:27:30 +0100
+
+btrbk (0.27.0-2) UNRELEASED; urgency=medium
+
+  * Use asciidoc as optional build-depend to asciidoctor for easy backports
+    on older systems
+  * Suggest python3 as one of the optional contrib scripts needs it
+
+ -- Yaroslav Halchenko <debian@onerussian.com>  Tue, 23 Oct 2018 10:54:03 -0400
+
+btrbk (0.27.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Build man pages using asciidoctor instead of asciidoc.
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 16 Oct 2018 12:33:36 +0200
+
+btrbk (0.26.1-1) unstable; urgency=low
+
+  * New upstream release.
+  * Use https for homepage, source and watch url.
+  * Add "suggests" dependency on openssl.
+  * Add "recommends" dependency on mbuffer.
+  * Silence lintian python-script-but-no-python-dep
+
+ -- Axel Burri <axel@tty0.ch>  Mon, 05 Mar 2018 14:22:32 +0100
+
+btrbk (0.26.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Add asciidoc and xmlto to Build-Depends
+  * Use Standards-Version: 4.1.1
+  * Use https:// url for Vcs-Git
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 12 Oct 2017 00:05:57 +0200
+
+btrbk (0.25.1-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 30 Jul 2017 16:30:30 +0200
+
+btrbk (0.25.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 18 Mar 2017 17:24:40 +0100
+
+btrbk (0.24.0-1) unstable; urgency=medium
+
+  * New upstream release.
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 16 Nov 2016 15:36:10 +0100
+
+btrbk (0.23.3-1) unstable; urgency=low
+
+  * New upstream release.
+  * Rename upstream "ChangeLog" to "changelog".
+  * Fix copyright year.
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 14 Jul 2016 02:30:34 +0200
+
+btrbk (0.23.2-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Move openssh-client from suggested to recommended depends.
+  * Add 'pv' to recommended dependencies (closes: #824701).
+  * Depend on btrfs-progs (renamed from btrfs-tools). Leave
+    btrfs-tools as an alternative to ease backporting.
+  * Update standards version to 3.9.8 (no changes needed).
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 08 Jun 2016 11:32:41 +0200
+
+btrbk (0.23.1-1) unstable; urgency=medium
+
+  * Bugfix: set correct parent section when propagating targets.
+  * Add syslog output of transaction log.
+  * Do not print headers to transaction log anymore.
+  * Explain "orphaned" status in "stats" command, and suppress it on
+    "list backups" command.
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 03 May 2016 16:26:04 +0200
+
+btrbk (0.23.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * INCOMPATIBLE CONFIGURATION:
+    * Please read "doc/upgrade_to_v0.23.0.md" for details on updating
+      the configuration file (/etc/btrbk/btrbk.conf).
+    * Dropped "btrfs_progs_compat" option. Need btrfs-progs >= v3.18.
+    * Removed "resume_missing" configuration option.
+  * Create backups only if needed to satisfy retention policy.
+  * Preserve FIRST backup of hour/day/week/month instead of LAST.
+  * Replaced "{snapshot,target}_preserve_{daily,weekly,monthly}"
+    configuration options with "{snapshot,target}_preserve_min" and
+    "{snapshot,target}_preserve NNh NNd NNw NNm NNy" options.
+  * Added hourly/yearly retention policies.
+  * Allow regular directories for send-receive targets.
+  * Allow wildcards in subvolume section.
+  * Propagate targets defined in "volume" or "root" context to all
+    "subvolume" sections.
+  * Added "archive" command.
+  * Changed output format of "origin" command, add table formats.
+  * Added configuration option "rate_limit".
+  * Added new timestamp_format "long-iso", having a timezone postfix.
+  * Added "--print-schedule" command line option.
+  * Detect interrupted transfers of raw targets.
+  * Always read "readonly" flag (additional call to btrfs-progs).
+  * Warn on receive targets at unexpected location (instead of abort).
+  * On incremental send/receive, use all snapshots sharing same
+    parent_uuid as candidates for "-p <parent>" instead of only older
+    snapshots. As last resort, use subvolumes in snapshot_dir matching
+    btrbk file name scheme as candidates (which allows incremental
+    backups after the parent vanished, e.g. after backup restore).
+  * Use perl built-in Time::Local instead of Date::Calc.
+  * Improvements of internal data structures.
+
+ -- Axel Burri <axel@tty0.ch>  Sat, 23 Apr 2016 15:24:42 +0200
+
+btrbk (0.22.2-1) unstable; urgency=high
+
+  * New upstream release.
+  * Bugfix: fix checks on "btrfs sub show" output, which resulted in
+    breakage on btrfs-progs < 4.1.
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 02 Feb 2016 11:28:48 +0100
+
+btrbk (0.22.1-1) unstable; urgency=high
+
+  * New upstream release.
+  * Support for btrfs-progs v4.4.
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 20 Jan 2016 18:51:07 +0100
+
+btrbk (0.22.0-1) unstable; urgency=high
+
+  * New upstream release.
+  * Bugfix: fix monthly schedule if older than 10 weeks.
+  * Bugfix: fix sprintf used by config option "timestamp_format long"
+    when using perl-5.22.0.
+  * Bugfix: fix "--progress" option.
+  * Added "clean" command.
+  * Added "-n, --dry-run" option.
+  * Added configuration options "raw_target_compress_level",
+    "raw_target_compress_threads".
+  * Added "stats" command.
+  * Print "$hostname:$path" instead of "{$hostname}$path" in summary
+    and logs.
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 19 Jan 2016 20:54:31 +0100
+
+btrbk (0.21.0-1) unstable; urgency=medium
+
+  * Added transaction log (configuration option "transaction_log").
+  * Added configuration option "group".
+  * Allow filtering of all commands by group as well as targets.
+  * Added "list backups|snapshots|latest|config|source|volume|target"
+    commands (while removing "tree" command).
+  * Added "config print" command.
+  * Added "--format=table|long|raw" and "-t,--table" command line
+    options, producing tabular and raw (machine-readable) output for
+    "(dry)run", "tree" and "list" commands.
+  * Print scheduler details if -v option is set on action run/dryrun.
+  * Added configuration option "ssh_cipher_spec" (close: #47).
+  * Added "target raw", with GnuPG and compression support
+    (experimental).
+  * Added configuration option "timestamp_format short|long".
+  * Replaced "info" command with "usage", with tabular output.
+  * Bugfix: correctly handle "incremental no" option.
+  * Bugfix: return exit status 10 instead of 0 if one or more backup
+    tasks aborted.
+  * Better error handling for send/receive commands (close: #33).
+  * Hardened ssh_filter_btrbk.sh script: fine-grained access control,
+    restrict-path option, sudo option (close: #45).
+  * Added example cron script.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 25 Oct 2015 12:37:28 +0100
+
+btrbk (0.20.0-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Added configuration option "ssh_port" (close: #39).
+  * Added configuration option "ssh_compression" (close: #44).
+  * Added command line option "--progress" (close: #42).
+  * Bugfix: correct handling of empty "snapshot_dir" (close: #43).
+  * Accept long options on command line.
+  * Documentation: added FAQ.
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 02 Sep 2015 12:21:08 +0200
+
+btrbk (0.19.3-1) unstable; urgency=medium
+
+  * New upstream release.
+  * Initial debian packaging (Closes: #791797)
+  * Bugfix: fix sorting of dates in schedule().
+  * Bugfix: correct parsing of btrfs subvolume list (close: #28).
+  * Support for btrfs-progs v4.1-rc1.
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 21 Jun 2015 15:39:05 +0200
+
+btrbk (0.19.2-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Bugfix: fix crash when using btrfs-progs < 3.17.3 (close: #24).
+
+ -- Axel Burri <axel@tty0.ch>  Sun, 07 Jun 2015 12:37:27 +0200
+
+btrbk (0.19.1-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Use "cgen" for snapshot comparison.
+  * Bugfix: fix crash in summary display (close: #22).
+
+ -- Axel Burri <axel@tty0.ch>  Mon, 01 Jun 2015 12:53:14 +0200
+
+btrbk (0.19.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Added "snapshot_create onchange", which skips snapshot creation if
+    the latest snapshot is up-to-date (i.e. has same generation as the
+    source subvolume).
+  * Improved handling of command line subvolume filter for "run",
+    "dryrun" and "tree" actions (close: #21).
+  * Bugfix: fixed crash in action "diff".
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 27 May 2015 17:38:45 +0200
+
+btrbk (0.18.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * MIGRATION
+    - update ssh_filter_btrbk.sh on all remote hosts
+    - update configuration file (/etc/btrbk/btrbk.conf):
+      - "snapshot_create_always yes" -> "snapshot_create always"
+      - "snapshot_create_always no"  -> "snapshot_create ondemand"
+  * Set PATH variable instead of using absolute "/sbin/btrfs" for
+    compatibility with all linux distros out there, which all install
+    'btrfs' in different locations (close: #20).
+  * Added configuration option "snapshot_create", replacing option
+    "snapshot_create_always". This allows setups with multiple btrbk
+    instances on several hosts (close: #18).
+  * Added command line option -r (resume only).
+  * Catch and display errors from "btrfs subvolume show".
+  * Include systemd service and timer unit for daily backups.
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 21 May 2015 15:58:44 +0200
+
+btrbk (0.17.1-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * Bugfix: send/receive: delete possibly left-behind garbled
+    subvolume on failure. Fail with unrecoverable error if stray
+    target subvolume is in the way (close: #17).
+  * Bugfix: assume unreachable target as clean on snapshot creation if
+    snapshot_create_always is set (close: #19).
+
+ -- Axel Burri <axel@tty0.ch>  Fri, 15 May 2015 18:00:14 +0100
+
+btrbk (0.17.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release.
+  * New versioning scheme using more common three-level versions.
+  * Code refactoring: cleanup of data structures and handling of btrfs
+    subvolume tree, as well as security related code parts.
+  * Correct handling of symlinks to btrfs subvolumes (close: #12).
+  * Added configuration option "snapshot_name" (close: #5).
+  * Log messages now go to stderr, only the summary is printed on
+    stdout.
+  * Bugfix: allow "0" as subvolume name (close: #10).
+  * Bugfix: allow "/" as volume name (close: #15).
+  * Bugfix: check source AND targets for determining snapshot postfix
+    (close: #11).
+  * Bugfix: fixed "diff" action (colses: #14).
+  * Allow '+' character for subvolume names.
+  * Filesystems on remote hosts are now printed as
+    "{my.remote-host.com}" in summary and logs.
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 30 Apr 2015 14:52:44 +0100
+
+btrbk (0.16-1) UNRELEASED; urgency=high
+
+  * New upstream release.
+  * Bugfix: correctly check retention policy for missing backups
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 02 Apr 2015 17:27:22 +0100
+
+btrbk (0.15-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Added configuration option "btrfs_progs_compat", to be enabled if
+    using btrfs-progs < 3.17 (close: #6).
+  * Added configuration option "resume_missing", for automatic resume
+    of missing backups (close: #8).
+  * Removed configuration option "receive_log" in favor of printing
+    errors from "btrfs receive".
+  * Bugfix: show correct exit code on external command failure.
+  * Bugfix: no crash if "commit_delete" option is set to "no"
+
+ -- Axel Burri <axel@tty0.ch>  Wed, 01 Apr 2015 17:01:06 +0100
+
+btrbk (0.14-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Bugfix: correctly handle empty target subvolumes (blocker for all
+    new users; close: #4).
+
+ -- Axel Burri <axel@tty0.ch>  Fri, 20 Mar 2015 18:08:47 +0100
+
+btrbk (0.13-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Bugfix: allow '@' character for subvolume names (blocker for
+    ubuntu users, since ubuntu prefixes all subvolumes with '@' in its
+    subvolume layout; close: #3).
+
+ -- Axel Burri <axel@tty0.ch>  Thu, 19 Mar 2015 17:20:46 +0100
+
+btrbk (0.12-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Cleaner and more generic parsing of btrfs subvolume list.
+  * Bugfix: subvolumes are also allowed for "snapshot_dir" (close:
+    #1, #2).
+
+ -- Axel Burri <axel@tty0.ch>  Fri, 13 Mar 2015 19:39:42 +0100
+
+btrbk (0.11-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Added option -p (preserve backups).
+  * Added optional subvolume argument for run/dryrun actions, for
+    explicit selection of subvolumes to be processed.
+  * Bugfixes
+
+ -- Axel Burri <axel@tty0.ch>  Mon, 2 Mar 2015 11:35:22 +0100
+
+btrbk (0.10-1) UNRELEASED; urgency=low
+
+  * Initial release.
+
+ -- Axel Burri <axel@tty0.ch>  Tue, 10 Feb 2015 15:58:40 +0100

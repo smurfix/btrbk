@@ -1,0 +1,26 @@
+Source: btrbk
+Section: utils
+Priority: optional
+Maintainer: Axel Burri <axel@tty0.ch>
+Uploaders: Yaroslav Halchenko <debian@onerussian.com>
+Standards-Version: 4.6.1
+Build-Depends:
+ debhelper (>= 12),
+ asciidoctor,
+Homepage: https://digint.ch/btrbk/
+Vcs-Git: https://github.com/digint/btrbk-packaging.git -b debian
+Vcs-Browser: https://github.com/digint/btrbk-packaging
+
+
+Package: btrbk
+Architecture: all
+Depends: perl, btrfs-progs, ${misc:Depends}
+Recommends: openssh-client, mbuffer
+Suggests:
+ openssl,
+ python3,
+Description: backup tool for btrfs subvolumes
+ Backup tool for btrfs subvolumes, using a configuration file, allows
+ creation of backups from multiple sources to multiple destinations,
+ with ssh and flexible retention policy support (hourly, daily,
+ weekly, monthly).

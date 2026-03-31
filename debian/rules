@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+# See debhelper(7) (uncomment to enable)
+# output every command that modifies files on the build system.
+#DH_VERBOSE = 1
+
+# main packaging script based on dh7 syntax
+
+%:
+	dh $@
+
+
+# fix lintian issues:
+# - systemd-service-file-outside-lib
+# - duplicate-changelog-files
+override_dh_auto_configure:
+	dh_auto_configure
+	sed -i \
+	  -e 's/ChangeLog//' \
+	  Makefile
+
+execute_after_dh_auto_install:
+	# Let dh place btrbk.service and btrbk.timer.
+	mv debian/btrbk/usr/lib/systemd/system/* debian/
+	rmdir debian/btrbk/usr/lib/systemd/system debian/btrbk/usr/lib/systemd
+
+execute_after_dh_auto_clean:
+	rm -f debian/btrbk.service debian/btrbk.timer
